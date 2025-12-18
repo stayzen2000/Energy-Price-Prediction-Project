@@ -124,7 +124,7 @@ Add AI-generated summaries and recommendations:
 | **APIs** | FastAPI |
 | **Containerization** | Docker |
 | **LLM Integration** | OpenAI API (optional), LangChain (optional) |
-| **Visualization** | Streamlit or React |
+| **Visualization** | Power BI or Looker Studio |
 | **Cloud** | AWS |
 
 ---
