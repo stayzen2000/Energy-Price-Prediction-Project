@@ -1,0 +1,21 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY . /app/
+
+# Optional: basic OS deps (safe to keep)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install python deps first (better caching)
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the project code
+COPY . /app
+
+# Idle; n8n will run scripts via docker exec
+CMD ["bash", "-lc", "tail -f /dev/null"]
+
+# CMD ["n8n", "start"] 

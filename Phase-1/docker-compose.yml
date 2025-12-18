@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: energy_user
+      POSTGRES_PASSWORD: energy_pass
+      POSTGRES_DB: energy_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - energy_pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+
+  runner-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.runner
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+    command: ["python", "-m", "uvicorn", "runner_api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
+  python-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.runner
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      # IMPORTANT: inside Docker, host must be "postgres" not localhost
+      # Use ONE of these depending on how your config.py reads DB settings.
+
+      # If your app supports DATABASE_URL:
+      DATABASE_URL: postgresql+psycopg2://energy_user:energy_pass@postgres:5432/energy_db
+
+      # If your app uses separate vars (example):
+      # DB_HOST: postgres
+      # DB_PORT: 5432
+      # DB_NAME: energy_db
+      # DB_USER: energy_user
+      # DB_PASSWORD: energy_pass
+
+    volumes:
+      - .:/app
+    working_dir: /app
+
+  n8n:
+    image: n8nio/n8n:latest
+    depends_on:
+      - postgres
+      - python-runner
+    ports:
+      - "5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=America/New_York
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # Allows n8n Execute Command node to call docker exec
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  energy_pgdata:
+  n8n_data:

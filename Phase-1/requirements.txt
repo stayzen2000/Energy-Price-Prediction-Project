@@ -1,0 +1,9 @@
+python-dotenv
+requests
+pandas
+SQLAlchemy
+psycopg2-binary
+gridstatus
+pytz
+fastapi
+uvicorn
