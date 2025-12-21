@@ -1,0 +1,22 @@
+dataset:
+  raw_csv: "data/raw/Phase2_Training_Dataset.csv"
+  processed_path: "data/processed/training_frame.csv"
+
+forecast:
+  target_col: "demand_mw"
+  horizon_hours: 24
+
+cleaning:
+  zero_demand_as_missing: true
+  drop_rows_with_missing_target: true
+  price_missing_strategy: "keep"   # for demand forecasting we can keep it; we won't use price as a feature initially
+
+splits:
+  # Time-aware split cutoffs (we will refine after we inspect distribution)
+  train_end: "2025-06-30 23:00:00+00:00"
+  val_end:   "2025-09-30 23:00:00+00:00"
+  test_end:  "2025-12-17 23:00:00+00:00"
+
+metrics:
+  - "mae"
+  - "rmse"

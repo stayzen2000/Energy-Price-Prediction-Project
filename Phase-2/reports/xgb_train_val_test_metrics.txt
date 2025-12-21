@@ -1,0 +1,15 @@
+XGBoost Train/Val/Test (24h ahead) — xgb.train API
+xgboost_version=3.1.2
+TRAIN_END=2025-06-30 23:00:00+00:00
+VAL_END=2025-09-30 23:00:00+00:00
+train_rows=12446 val_rows=2208 test_rows=1848
+features=['hour_sin', 'hour_cos', 'dow_sin', 'dow_cos', 'is_weekend', 'month_sin', 'month_cos', 'demand_lag_1', 'demand_lag_24', 'demand_lag_48', 'demand_lag_168', 'demand_roll_mean_24', 'demand_roll_std_24', 'demand_roll_mean_168', 'demand_roll_std_168']
+
+VAL_MAE=1193.893031
+VAL_RMSE=1619.753845
+TEST_MAE=683.349783
+TEST_RMSE=934.617145
+
+best_iteration=158
+best_score=1619.753845729765
+model_path=models/xgb_24h.json
