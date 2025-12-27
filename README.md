@@ -224,16 +224,3 @@ Energy-Intelligence/
 - Phase 3 decisions are deterministic and explainable.
 
 All future phases build on this foundation — not the other way around.
-
-## 🚀 Getting Started
-
-*(Add setup instructions here)*
-
-## ✅ Next Recommended Step
-
-Add screenshots or a short GIF of:
-
-- Phase 3 terminal output
-- Phase 4 dashboard (once started)
-
-This will significantly increase recruiter engagement.
