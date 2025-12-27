@@ -4,9 +4,7 @@
 
 Energy Intelligence is an end-to-end, production-style energy forecasting and decision-support system designed to predict short-horizon electricity demand and prices using real grid and weather data.
 
-The project demonstrates how industry-grade data pipelines, leakage-safe time-series modeling, and disciplined ML evaluation practices are built and connected in real-world environments — from ingestion to forecasting to actionable insights.
-
----
+The project demonstrates how industry-grade data pipelines, leakage-safe time-series modeling, and disciplined ML evaluation practices are extended into operational decision-making systems — from ingestion to forecasting to insights and recommendations.
 
 ## 🎯 Purpose of This Project
 
@@ -18,13 +16,11 @@ Electricity demand and pricing are increasingly volatile due to:
 
 Most organizations lack tools that allow them to anticipate risk before it materializes.
 
-**This project focuses on:**
+This project focuses on:
 
 - 🔮 Forecasting short-horizon demand and prices
-- 🧠 Enabling proactive operational decision-making
-- 🏗️ Demonstrating production-grade data & ML engineering practices
-
----
+- 🧠 Translating forecasts into actionable decisions
+- 🏗️ Demonstrating production-grade data & ML system design
 
 ## 👥 Who This Project Helps
 
@@ -53,8 +49,6 @@ Most organizations lack tools that allow them to anticipate risk before it mater
 - Adjust usage to reduce bills
 - Make informed, data-driven decisions
 
----
-
 ## 💡 How This System Creates Value
 
 Instead of reacting to energy costs after the fact, the system enables users to:
@@ -62,11 +56,9 @@ Instead of reacting to energy costs after the fact, the system enables users to:
 - 📊 Forecast upcoming demand and price movements
 - ⚠️ Identify high-risk periods (peaks, volatility regimes)
 - 🔄 Adjust operations proactively
-- 🧠 Consume insights through interpretable metrics and diagnostics
+- 🧠 Consume insights through interpretable metrics and recommendations
 
 This leads to better planning, lower costs, and reduced operational risk.
-
----
 
 ## ✨ Key Capabilities (Current)
 
@@ -76,11 +68,8 @@ This leads to better planning, lower costs, and reduced operational risk.
 - Demand forecasting (24-hour horizon)
 - Price forecasting (next-hour horizon)
 - Time-aware evaluation and rolling backtests
-- Diagnostic notebooks and reproducible reports
-
-> ⚠️ **Note:** Prediction serving, dashboards, and AI summaries are intentionally deferred to later phases.
-
----
+- Deterministic insight derivation and recommendations
+- Reproducible, structured decision-support outputs
 
 ## 🧭 Project Phases
 
@@ -91,9 +80,7 @@ This leads to better planning, lower costs, and reduced operational risk.
 - Dockerized ingestion workflows for reproducibility
 - Orchestrated ingestion with n8n
 
-📂 **See:** `Phase-1/README.md`
-
----
+📂 See: `Phase-1/README.md`
 
 ### ✅ Phase 2 — Modeling & Forecasting (Completed)
 
@@ -115,67 +102,87 @@ Phase 2 converts validated energy data into defensible forecasting intelligence.
 
 **Key outcome:** XGBoost outperforms strong baselines while degrading honestly under spike conditions.
 
-📂 **See:** `Phase-2/README.md`  
+📂 See: `Phase-2/README.md`  
 📓 Diagnostics notebooks included for both demand and price.
 
----
+### ✅ Phase 3 — Insight & Decision Layer (Completed)
 
-### 🔜 Phase 3 — Insight & Decision Layer (Planned)
+Phase 3 operationalizes the trained forecasting models into business-ready decision intelligence.
 
-Phase 3 will transform forecasts into operational intelligence, including:
+Rather than introducing new ML, this phase focuses on how forecasts are consumed in real systems.
 
-- Risk flags and thresholds
-- Actionable alerts (e.g., upcoming high-price windows)
-- Forecast confidence and regime awareness
-- Human-readable summaries for operators
+#### What Phase 3 Does
 
-This phase focuses on decision support, not model complexity.
+- Loads frozen Phase-2 feature frames and trained models
+- Runs read-only inference (no retraining, no tuning)
+- Generates:
+  - 24-hour demand forecasts
+  - Next-hour price forecasts
+- Derives deterministic insights:
+  - Peak demand windows (percentile-based thresholds)
+  - Price regimes (normal / high / spike)
+  - Volatility flags
+- Produces conservative, explainable recommendations
+- Packages everything into a single structured output contract (JSON)
 
----
+This output is designed to be consumed downstream by dashboards, APIs, or conversational interfaces.
+
+📂 See: `Phase-3/README.md`
+
+#### Important Limitation (Intentional)
+
+Phase 3 runs on a frozen dataset snapshot from Phase 2 to preserve:
+
+- Reproducibility
+- Auditability
+- Leakage safety
+
+As a result:
+
+- Forecasts are generated relative to the latest available feature timestamps
+- Live, wall-clock forecasts are intentionally not shown
+- Demand and price forecasts may reference different "as-of" times
+
+This is expected behavior and is explicitly logged in outputs. Live ingestion and real-time serving are deferred to Phase 5 (Production Deployment).
 
 ### 🔜 Phase 4 — Visualization & Consumption (Planned)
 
-Interactive dashboards for:
+Phase 4 will build user-facing interfaces on top of the Phase-3 output contract:
 
-- Historical trends
-- Forecast windows
-- Risk indicators
+- Visual dashboards (forecast curves, risk indicators)
+- Recommendation panels
+- Conversational UI (LLM-powered Q&A grounded in the same contract)
 
-Operator-facing views designed for action, not exploration.
-
----
+Phase 4 is a presentation layer, not a decision engine.
 
 ### 🔜 Phase 5 — Deployment & Monitoring (Planned)
 
-- API-based forecast serving
-- Containerized deployment
-- Logging, monitoring, and alerting
-- Scalability considerations
-
----
+- Scheduled live data ingestion
+- Feature materialization for serving
+- API-based inference
+- Containerized deployment (AWS)
+- Logging, monitoring, and data freshness checks
 
 ## 🛠️ Tech Stack (Actual, Not Aspirational)
 
 | Component | Technology |
 |-----------|------------|
-| **Language** | Python |
-| **Database** | PostgreSQL |
-| **ML Models** | Ridge Regression, XGBoost |
-| **Time-Series Handling** | Pandas, NumPy |
-| **Workflow Orchestration** | n8n |
-| **Containerization** | Docker |
-| **Diagnostics & Reporting** | Jupyter, Markdown |
-| **Cloud (Planned)** | AWS |
+| Language | Python |
+| Database | PostgreSQL |
+| ML Models | Ridge Regression, XGBoost |
+| Time-Series Handling | Pandas, NumPy |
+| Workflow Orchestration | n8n |
+| Containerization | Docker |
+| Diagnostics & Reporting | Jupyter, Markdown |
+| Cloud (Planned) | AWS |
 
-> Deep learning frameworks (TensorFlow / PyTorch) are intentionally deferred until justified by data and use case.
-
----
+Deep learning frameworks (TensorFlow / PyTorch) are intentionally deferred until justified by data and use case.
 
 ## 🚦 Why This Project Matters
 
 This project is deliberately built to reflect how real ML systems are developed, not how demo notebooks are written.
 
-**It demonstrates:**
+It demonstrates:
 
 - 🧱 Production-style data engineering
 - ⏱️ Correct time-series modeling discipline
@@ -183,15 +190,12 @@ This project is deliberately built to reflect how real ML systems are developed,
 - 🔍 Diagnostic transparency
 - 🧠 Business-aware ML decision-making
 
----
-
 ## 📌 Current Status
 
-- ✅ **Phase 1** — Complete
-- ✅ **Phase 2** — Complete
-- 🔜 **Phase 3** — Planned
-
----
+- ✅ Phase 1 — Complete
+- ✅ Phase 2 — Complete
+- ✅ Phase 3 — Complete
+- 🔜 Phase 4 — Planned
 
 ## 📂 Project Structure
 
@@ -200,52 +204,36 @@ Energy-Intelligence/
 ├── Phase-1/              # Data ingestion & orchestration
 │   └── README.md
 ├── Phase-2/              # Modeling & forecasting (COMPLETE)
-│   ├── src/              # Production scripts
-│   ├── notebooks/        # Diagnostics & interpretation
-│   ├── data/processed/   # Feature & model frames
-│   ├── reports/          # Evaluation outputs
+│   ├── src/
+│   ├── notebooks/
+│   ├── data/processed/
+│   ├── reports/
 │   └── README.md
-├── Phase-3/              # Insight & decision layer (planned)
+├── Phase-3/              # Insight & decision layer (COMPLETE)
+│   ├── src/
+│   ├── outputs/
+│   └── README.md
 ├── Phase-4/              # Visualization & dashboards (planned)
 ├── Phase-5/              # Deployment & monitoring (planned)
-└── README.md             # This file
+└── README.md
 ```
-
----
 
 ## 🔒 Final Note
 
-**Phase 2 is locked, reproducible, and defensible.**
+- Phase 2 models are locked and reproducible.
+- Phase 3 decisions are deterministic and explainable.
 
-All subsequent phases build on this forecasting foundation — not the other way around.
-
----
+All future phases build on this foundation — not the other way around.
 
 ## 🚀 Getting Started
 
-### Prerequisites
+*(Add setup instructions here)*
 
-- Python 3.8+
-- PostgreSQL 12+
-- Docker & Docker Compose
-- n8n (for orchestration)
+## ✅ Next Recommended Step
 
-### Quick Start
+Add screenshots or a short GIF of:
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/energy-intelligence.git
-cd energy-intelligence
+- Phase 3 terminal output
+- Phase 4 dashboard (once started)
 
-# Set up Phase 1 (data ingestion)
-cd Phase-1
-docker-compose up -d
-
-# Set up Phase 2 (modeling)
-cd ../Phase-2
-pip install -r requirements.txt
-python src/train_demand_model.py
-python src/train_price_model.py
-```
-
-For detailed setup instructions, see the README in each phase directory.
+This will significantly increase recruiter engagement.
