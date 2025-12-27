@@ -209,7 +209,106 @@ def main() -> None:
     save_json(bundle, out_path)
 
     print(f"\nSaved Phase-3 bundle → {out_path}")
+    print_presentation_summary(
+    demand_forecast=demand_forecast,
+    price_forecast=price_forecast,
+    demand_insights=demand_insights,
+    price_insights=price_insights,
+    recommendations=recommendations,
+    demand_asof=demand_asof_ts,
+    price_asof=price_asof_ts,
+)
     print("Done.")
+
+
+def print_presentation_summary(
+    *,
+    demand_forecast,
+    price_forecast,
+    demand_insights,
+    price_insights,
+    recommendations,
+    demand_asof,
+    price_asof,
+):
+    print("\n" + "=" * 60)
+    print("PHASE 3 — FORECAST, INSIGHTS & RECOMMENDATIONS")
+    print("=" * 60)
+
+    print("\nAs-of timestamps:")
+    print(f"• Demand data: {demand_asof}")
+    print(f"• Price data:  {price_asof}")
+
+    # ---------------- Demand ----------------
+    print("\n" + "-" * 50)
+    print("DEMAND FORECAST (Next 24 Hours)")
+    print(f"Forecast window: {demand_forecast['forecast_ts'].min()} → {demand_forecast['forecast_ts'].max()}")
+    print("-" * 50)
+
+    df = demand_forecast.copy()
+    df["hour"] = df["forecast_ts"].dt.strftime("%H:%M")
+    df["mw"] = df["yhat_demand_mw"].round(0).astype(int)
+
+    print("Hour (UTC)        Forecast Demand (MW)")
+    print("-" * 38)
+
+    for _, row in df.head(3).iterrows():
+        print(f"{row['hour']:<16} {row['mw']:>8,}")
+
+    print("...")
+
+    for _, row in df.tail(3).iterrows():
+        print(f"{row['hour']:<16} {row['mw']:>8,}")
+
+    # ---------------- Price ----------------
+    print("\n" + "-" * 50)
+    print("PRICE FORECAST (Next Hour)")
+    print("-" * 50)
+
+    price_row = price_forecast.iloc[0]
+
+    print(f"Forecast hour:    {price_row['forecast_ts']}")
+    print(f"Predicted price:  ${price_row['yhat_price_per_mwh']:.2f} / MWh")
+    print(f"Price regime:     {price_insights['regime'].upper()}")
+    print(f"Volatility flag:  {price_insights['volatility_flag']}")
+
+    # ---------------- Insights ----------------
+    print("\nINSIGHTS SUMMARY")
+    print(f"• Demand peak threshold (p95): {int(demand_insights['threshold_mw']):,} MW")
+    print(f"• Peak demand hours flagged: {len(demand_insights['peak_hours'])}")
+
+    top_peaks = demand_insights.get("top_peaks", [])
+    if top_peaks:
+        print("• Top demand hours:")
+
+        first = top_peaks[0]
+
+        # Case A: list of dicts: {"ts": ..., "yhat_demand_mw": ...}
+        if isinstance(first, dict):
+            for item in top_peaks:
+                ts = item.get("ts")
+                mw = item.get("yhat_demand_mw")
+                if mw is None:
+                    continue
+                print(f"  - {ts} → {int(round(float(mw))):,} MW")
+
+        # Case B: list of tuples: (ts, mw)
+        else:
+            for ts, mw in top_peaks:
+                print(f"  - {ts} → {int(round(float(mw))):,} MW")
+
+
+    # ---------------- Recommendations ----------------
+    print("\nRECOMMENDATIONS")
+    for r in recommendations:
+        sev = r["severity"].upper()
+        print(f"[{sev}] {r['type']}: {r['message']}")
+        print(f"  Why: {r['why']}")
+        if "predicted_price_per_mwh" in r.get("evidence", {}):
+            print(f"  Evidence: price=${r['evidence']['predicted_price_per_mwh']:.2f}")
+        print()
+
+    print("-" * 50)
 
 
 if __name__ == "__main__":
